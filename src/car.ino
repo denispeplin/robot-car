@@ -1,7 +1,19 @@
+// Проблема с компиляцией в Arduino IDE 1.6.5
+// Чтобы решить, надо в libraries заменить каталог IRemote на архив отсюда: https://github.com/z3t0/Arduino-IRremote
+// Подробнее: https://github.com/z3t0/Arduino-IRremote/issues/53#issuecomment-60281017
+
+// Motor control
 int IN1 = 1;
 int IN2 = 2;
 int IN3 = 3;
 int IN4 = 4;
+
+#include <IRremote.h>
+
+int RECV_PIN = 11;
+
+IRrecv irrecv(RECV_PIN); // create instance of 'irrecv'
+decode_results results; // create instance of 'decode_results'
 
 void setup()
 {
@@ -9,24 +21,38 @@ void setup()
   pinMode (IN2, OUTPUT);
   pinMode (IN3, OUTPUT);
   pinMode (IN4, OUTPUT);
+  irrecv.enableIRIn();
 }
 
 void loop()
 {
-  forward();
-  delay(2000);
-  fullstop();
-  delay(500);
-  back();
-  delay(2000);
-  fullstop();
-  delay(1000);
-  rollright();
-  delay(1000);
-  rollleft();
-  delay(1000);
-  fullstop();
-  delay(5000);
+  if (irrecv.decode(&results)) {
+    driveCar();
+    irrecv.resume(); // Receive the next value
+  }
+}
+
+void driveCar()
+{
+  switch(results.value)
+  {
+    case 0xFF10EF: // number 4
+      left();
+      break;
+    case 0xFF5AA5: // 6
+      right();
+      break;
+    case 0xFF18E7: // 2
+      forward();
+      break;
+    case 0xFF4AB5: // 8
+      back();
+      break;
+    case 0xFF38C7: // 5
+      fullstop();
+      break;
+  }
+  delay(100);
 }
 
 void forward()
@@ -47,13 +73,13 @@ void back()
   rightback();
 }
 
-void rollleft()
+void left()
 {
   leftstop();
   rightforward();
 }
 
-void rollright()
+void right()
 {
   rightstop();
   leftforward();
