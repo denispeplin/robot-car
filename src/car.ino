@@ -3,19 +3,10 @@
 // Подробнее: https://github.com/z3t0/Arduino-IRremote/issues/53#issuecomment-60281017
 
 // Motor control
-int IN1 = 1;
-int IN2 = 2;
-int IN3 = 3;
-int IN4 = 4;
-
-int motorState[4] = {LOW, LOW, LOW, LOW};
-
-#include <IRremote.h>
-
-int RECV_PIN = 11;
-
-IRrecv irrecv(RECV_PIN); // create instance of 'irrecv'
-decode_results results; // create instance of 'decode_results'
+int IN1 = 2;
+int IN2 = 3;
+int IN3 = 4;
+int IN4 = 5;
 
 void setup()
 {
@@ -23,54 +14,40 @@ void setup()
   pinMode (IN2, OUTPUT);
   pinMode (IN3, OUTPUT);
   pinMode (IN4, OUTPUT);
-  irrecv.enableIRIn();
+  Serial.begin(9600);
 }
 
 void loop()
 {
-  if (irrecv.decode(&results)) {
-    driveCar();
-    irrecv.resume(); // Receive the next value
+  if (Serial.available())
+  {
+    int command = Serial.read();
+    driveCar(command);
   }
 }
 
-void driveCar()
+// Bluetooth version. Download the program and look for letters in settings
+// https://play.google.com/store/apps/details?id=braulio.calle.bluetoothRCcontroller&hl=en
+void driveCar(int val)
 {
-  switch(results.value)
+  switch(val)
   {
-    case 0xFF10EF: // number 4
+    case 'L':
       left();
       break;
-    case 0xFF5AA5: // 6
+    case 'R':
       right();
       break;
-    case 0xFF18E7: // 2
+    case 'F':
       forward();
       break;
-    case 0xFF4AB5: // 8
+    case 'B':
       back();
       break;
-    case 0xFF38C7: // 5
+    case 'S':
       fullstop();
       break;
   }
-  delay(100);
-}
-
-void saveMotorState()
-{
-  motorState[0] = digitalRead(IN1);
-  motorState[1] = digitalRead(IN2);
-  motorState[2] = digitalRead(IN3);
-  motorState[3] = digitalRead(IN4);
-}
-
-void loadMotorState()
-{
-  digitalWrite(IN1, motorState[0]);
-  digitalWrite(IN2, motorState[1]);
-  digitalWrite(IN3, motorState[2]);
-  digitalWrite(IN4, motorState[3]);
 }
 
 void forward()
@@ -93,20 +70,14 @@ void back()
 
 void left()
 {
-  saveMotorState();
   leftstop();
   rightforward();
-  delay(400);
-  loadMotorState();
 }
 
 void right()
 {
-  saveMotorState();
   rightstop();
   leftforward();
-  delay(400);
-  loadMotorState();
 }
 
 void leftforward()

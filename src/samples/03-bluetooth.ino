@@ -1,5 +1,8 @@
 // http://zelectro.cc/HC-06_bluetooth_module
-// https://play.google.com/store/apps/details?id=Qwerty.BluetoothTerminal
+//
+// just term https://play.google.com/store/apps/details?id=Qwerty.BluetoothTerminal
+// or
+// car control https://play.google.com/store/apps/details?id=braulio.calle.bluetoothRCcontroller&hl=en
 
 int val;
 int LED = 13;
@@ -17,14 +20,12 @@ void loop()
   {
     val = Serial.read();
 
-    // При символе "W" включаем светодиод
-    if (val == 'W')
+    if (val == 'F')
     {
       digitalWrite(LED, HIGH);
     }
 
-    // При символе "S" выключаем светодиод
-    if ( val == 'S')
+    if (val == 'B')
     {
       digitalWrite(LED, LOW);
     }
