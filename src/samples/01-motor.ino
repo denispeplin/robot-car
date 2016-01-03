@@ -1,4 +1,4 @@
-# http://zelectro.cc/Motor_shield_L298N_Arduino
+// http://zelectro.cc/Motor_shield_L298N_Arduino
 
 int IN3 = 3; // Input3 подключен к выводу 3
 int IN4 = 4;
