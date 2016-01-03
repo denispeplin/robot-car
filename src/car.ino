@@ -8,6 +8,8 @@ int IN2 = 2;
 int IN3 = 3;
 int IN4 = 4;
 
+int motorState[4] = {LOW, LOW, LOW, LOW};
+
 #include <IRremote.h>
 
 int RECV_PIN = 11;
@@ -55,6 +57,22 @@ void driveCar()
   delay(100);
 }
 
+void saveMotorState()
+{
+  motorState[0] = digitalRead(IN1);
+  motorState[1] = digitalRead(IN2);
+  motorState[2] = digitalRead(IN3);
+  motorState[3] = digitalRead(IN4);
+}
+
+void loadMotorState()
+{
+  digitalWrite(IN1, motorState[0]);
+  digitalWrite(IN2, motorState[1]);
+  digitalWrite(IN3, motorState[2]);
+  digitalWrite(IN4, motorState[3]);
+}
+
 void forward()
 {
   leftforward();
@@ -75,14 +93,20 @@ void back()
 
 void left()
 {
+  saveMotorState();
   leftstop();
   rightforward();
+  delay(400);
+  loadMotorState();
 }
 
 void right()
 {
+  saveMotorState();
   rightstop();
   leftforward();
+  delay(400);
+  loadMotorState();
 }
 
 void leftforward()
